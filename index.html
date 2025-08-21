@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="Echap Ai">
+    <meta name="google-site-verification" content="rOGvauswNr5SlT2OdHqVqValiPTtH3WxEsM18TaaQUU" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echap AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the chatbot UI */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #d1d5db;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes bounce {
+            0%,
+            100% {
+                transform: translateY(-25%);
+                animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+            }
+            50% {
+                transform: translateY(0);
+                animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+            }
+        }
+
+        .animate-bounce {
+            animation: bounce 1s infinite;
+        }
+
+        .animate-bounce2 {
+            animation: bounce 1s infinite 0.2s;
+        }
+
+        .animate-bounce3 {
+            animation: bounce 1s infinite 0.4s;
+        }
+
+        .info-box {
+            background-color: #3b82f6;
+            border-left: 4px solid #1e40af;
+            color: #dbeafe;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-gray-200 flex items-center justify-center min-h-screen p-4">
+    <div class="flex w-full max-w-5xl h-full md:h-[90vh] bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+
+        <div id="sidebar" class="w-1/4 bg-gray-900 border-r border-gray-700 flex flex-col p-4 overflow-y-auto hidden md:flex">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-white">Chats</h2>
+                <button id="new-chat-button-sidebar" class="bg-indigo-600 text-white rounded-full p-2 hover:bg-indigo-700 transition-colors shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                </button>
+            </div>
+            <ul id="chat-list" class="flex-1 space-y-2">
+            </ul>
+        </div>
+        <div class="flex flex-col flex-1">
+            <header class="bg-gray-800 text-white p-4 flex items-center justify-between shadow-md">
+                <div class="flex items-center">
+                    <img src="Gemini_Generated_Image_u46bo4u46bo4u46b.png" alt="Echap AI logo" class="h-10 mr-4 rounded-full">
+                    <div>
+                        <h1 class="text-xl font-semibold">Echap AI</h1>
+                        <p class="text-sm text-gray-400">Online and ready to help</p>
+                        <div class="mt-2">
+                            <label for="bot-type-selector" class="text-xs text-gray-400 block mb-1">Bot Type</label>
+                            <select id="bot-type-selector" class="bg-gray-700 text-white border border-gray-600 rounded-md px-2 py-1 text-sm focus:outline-none focus:border-indigo-500">
+                                <option value="normal">Normal Bot</option>
+                                <option value="recipe">Recipe Bot</option>
+                                <option value="homework">Homework Bot</option>
+                                <option value="canvas">Canvas Bot</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="clear-chat-button" class="bg-red-600 text-white rounded-full p-2 hover:bg-red-700 transition-colors shadow-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m-1.022.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79M21.75 6.75h-15M12 4.5v15" />
+                        </svg>
+                    </button>
+                    <button id="new-chat-button-header" class="bg-indigo-600 text-white rounded-full p-2 hover:bg-indigo-700 transition-colors shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 md:hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <main id="chat-history" class="flex-1 p-4 overflow-y-auto space-y-4">
+                <div id="drop-zone" class="hidden border-2 border-dashed border-gray-500 rounded-lg p-6 text-center text-gray-400">
+                    <p>Drop your code block here to get its HTML!</p>
+                </div>
+            </main>
+
+            <div class="p-4 bg-gray-900 border-t border-gray-700 flex items-center justify-center">
+                <a href="https://www.youtube.com/@echap-ai" class="text-indigo-400 hover:text-indigo-300 transition-colors">Subscribe to https://www.youtube.com/@echap-ai</a>
+            </div>
+
+            <div id="loading-indicator" class="p-4 text-center text-gray-400 hidden">
+                <div class="flex items-center justify-center">
+                    <div class="w-4 h-4 rounded-full bg-indigo-500 animate-bounce"></div>
+                    <div class="w-4 h-4 rounded-full bg-indigo-500 mx-2 animate-bounce2"></div>
+                    <div class="w-4 h-4 rounded-full bg-indigo-500 animate-bounce3"></div>
+                </div>
+                <p class="mt-2 text-sm">Thinking...</p>
+            </div>
+
+            <form id="chat-form" class="p-4 bg-gray-900 border-t border-gray-700 flex items-center gap-2">
+                <input type="text" id="user-input" placeholder="Ask Echap..." class="flex-1 border-2 border-gray-600 bg-gray-700 text-white rounded-full px-4 py-2 focus:outline-none focus:border-indigo-500 transition-colors" autocomplete="off">
+                <button type="button" id="mic-button" class="bg-gray-600 text-white rounded-full p-3 hover:bg-gray-700 transition-colors shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                    </svg>
+                </button>
+                <button type="submit" id="send-button" class="bg-indigo-600 text-white rounded-md px-5 py-2 hover:bg-indigo-700 transition-colors shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    Send
+                </button>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatForm = document.getElementById('chat-form');
+            const userInput = document.getElementById('user-input');
+            const chatHistory = document.getElementById('chat-history');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const sendButton = document.getElementById('send-button');
+            const micButton = document.getElementById('mic-button');
+
+            const newChatButtonSidebar = document.getElementById('new-chat-button-sidebar');
+            const newChatButtonHeader = document.getElementById('new-chat-button-header');
+            const clearChatButton = document.getElementById('clear-chat-button');
+            const chatList = document.getElementById('chat-list');
+
+            const botTypeSelector = document.getElementById('bot-type-selector');
+            const dropZone = document.getElementById('drop-zone');
+
+            // The API key is now provided by the environment.
+            // Do not hardcode a key here.
+            const apiKey = "AIzaSyClBiWQfA26KdaKO6zD1LS-11jEpOhFfCo";
+
+            const getInitialPrompt = () => {
+                const botType = botTypeSelector.value;
+                let prompt = "";
+                switch (botType) {
+                    case "recipe":
+                        prompt = "You are a helpful and creative recipe chatbot. Your name is Echap AI. Respond to all requests by providing a recipe. If the user asks for something other than a recipe, politely tell them that you can only provide recipes and ask them to try again. Do not mention that you are an AI or a language model.";
+                        break;
+                    case "homework":
+                        prompt = "You are an educational homework helper named Echap AI. Your purpose is to assist with homework questions, explain concepts, and provide study tips. Respond to all requests by providing homework help. If the user asks for something unrelated to homework or education, politely tell them that you are a homework helper and ask them to provide a homework question. Do not mention that you are an AI or a language model.";
+                        break;
+                    case "canvas":
+                        prompt = "You are a specialized coding assistant named Canvas Bot. Your purpose is to provide direct, clean, and functional code in HTML, CSS, JavaScript, or Python. Always wrap your code in a code block. Do not provide conversational responses or explain the code unless specifically asked. Only provide the raw code. If a user asks for something other than code, politely tell them that you are a coding bot and can only provide code. Do not mention that you are an AI or a language model.";
+                        break;
+                    case "normal":
+                    default:
+                        prompt = "You are a friendly and knowledgeable chatbot named Echap AI. Respond to my questions in a helpful and conversational manner. Do not mention that you are an AI or a language model.";
+                        break;
+                }
+                return [{
+                    role: "user",
+                    parts: [{
+                        text: prompt
+                    }]
+                }];
+            };
+
+            let chats = [];
+            let currentChatId = null;
+
+            const saveChats = () => {
+                localStorage.setItem('echapAiChats', JSON.stringify(chats));
+            };
+
+            const loadChats = () => {
+                const storedChats = localStorage.getItem('echapAiChats');
+                if (storedChats) {
+                    try {
+                        chats = JSON.parse(storedChats);
+                    } catch (e) {
+                        console.error('Failed to parse chats from localStorage', e);
+                        chats = [];
+                    }
+                }
+
+                if (chats.length === 0) {
+                    createNewChat();
+                } else {
+                    currentChatId = chats[0].id;
+                    renderChatList();
+                    loadChat(currentChatId);
+                }
+            };
+
+            const createNewChat = () => {
+                const newChat = {
+                    id: Date.now().toString(),
+                    title: 'New Chat',
+                    history: getInitialPrompt()
+                };
+                chats.unshift(newChat);
+                currentChatId = newChat.id;
+                saveChats();
+                renderChatList();
+                loadChat(currentChatId);
+            };
+
+            const loadChat = (chatId) => {
+                currentChatId = chatId;
+                const selectedChat = chats.find(c => c.id === chatId);
+                if (selectedChat) {
+                    chatHistory.innerHTML = '';
+                    selectedChat.history.slice(1).forEach(message => {
+                        appendMessage(message.parts[0].text, message.role === 'user' ? 'user' : 'bot');
+                    });
+                    renderChatList();
+                }
+                updateUIForBotType();
+            };
+
+            const renderChatList = () => {
+                chatList.innerHTML = '';
+                chats.forEach(chat => {
+                    const listItem = document.createElement('li');
+                    const firstUserMessage = chat.history.find(msg => msg.role === 'user');
+                    const chatTitle = firstUserMessage ? firstUserMessage.parts[0].text.substring(0, 20) + '...' : 'New Chat';
+
+                    listItem.className = `p-3 rounded-lg cursor-pointer transition-colors duration-200 ${
+                        chat.id === currentChatId ? 'bg-indigo-600 font-bold' : 'hover:bg-gray-700'
+                    }`;
+                    listItem.textContent = chatTitle;
+                    listItem.addEventListener('click', () => {
+                        loadChat(chat.id);
+                    });
+                    chatList.appendChild(listItem);
+                });
+            };
+
+            const appendMessage = (text, sender) => {
+                const messageContainer = document.createElement('div');
+                messageContainer.className = `flex items-start space-x-3 ${sender === 'user' ? 'justify-end' : ''}`;
+
+                const avatar = document.createElement('img');
+                avatar.className = 'rounded-full flex-shrink-0';
+                avatar.src = sender === 'user' ? 'https://placehold.co/40x40/A5B4FC/3730A3?text=U' : 'https://raw.githubusercontent.com/echap-ai/echap/main/docs/assets/echap_logo.png';
+                avatar.alt = sender === 'user' ? 'User Avatar' : 'Bot Avatar';
+
+                const messageBubble = document.createElement('div');
+                messageBubble.className = `rounded-lg p-3 max-w-xs md:max-w-md shadow-sm animate-fade-in-up ${
+                    sender === 'user' ? 'bg-indigo-500 text-white' : 'bg-gray-700 text-gray-200'
+                }`;
+                messageBubble.innerHTML = `<p>${text}</p>`;
+
+                if (sender === 'user') {
+                    messageContainer.appendChild(messageBubble);
+                    messageContainer.appendChild(avatar);
+                } else {
+                    messageContainer.appendChild(avatar);
+                    messageContainer.appendChild(messageBubble);
+                }
+
+                chatHistory.appendChild(messageContainer);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            };
+
+            const toggleUIState = (isLoading) => {
+                userInput.disabled = isLoading;
+                sendButton.disabled = isLoading;
+                micButton.disabled = isLoading;
+                newChatButtonSidebar.disabled = isLoading;
+                newChatButtonHeader.disabled = isLoading;
+                clearChatButton.disabled = isLoading;
+                botTypeSelector.disabled = isLoading;
+
+                if (isLoading) {
+                    loadingIndicator.classList.remove('hidden');
+                    sendButton.classList.add('opacity-50', 'cursor-not-allowed');
+                    micButton.classList.add('opacity-50', 'cursor-not-allowed');
+                    newChatButtonSidebar.classList.add('opacity-50', 'cursor-not-allowed');
+                    newChatButtonHeader.classList.add('opacity-50', 'cursor-not-allowed');
+                    clearChatButton.classList.add('opacity-50', 'cursor-not-allowed');
+                    botTypeSelector.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    loadingIndicator.classList.add('hidden');
+                    sendButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                    micButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                    newChatButtonSidebar.classList.remove('opacity-50', 'cursor-not-allowed');
+                    newChatButtonHeader.classList.remove('opacity-50', 'cursor-not-allowed');
+                    clearChatButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                    botTypeSelector.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            };
+
+            const getBotResponse = async (userPrompt) => {
+                const apiKey = "AIzaSyAmsIYzx_BhnUhF15U6IvH_BJJpM23GVDs"; 
+                const providedApiKey = apiKey;
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${providedApiKey}`;
+
+                const currentChat = chats.find(c => c.id === currentChatId);
+                if (!currentChat) return;
+
+                currentChat.history.push({
+                    role: "user",
+                    parts: [{
+                        text: userPrompt
+                    }]
+                });
+
+                if (currentChat.title === 'New Chat') {
+                    currentChat.title = userPrompt.substring(0, 20) + '...';
+                    renderChatList();
+                }
+
+                const payload = {
+                    contents: currentChat.history
+                };
+
+                toggleUIState(true);
+
+                try {
+                    let response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('API call failed:', response.status, response.statusText, errorText);
+                        appendMessage(`Error: Unable to connect to the Gemini API. Status: ${response.status}. It's possible the API key is invalid or your network has a problem.`, 'bot');
+                        return;
+                    }
+
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const botText = result.candidates[0].content.parts[0].text;
+                        currentChat.history.push({
+                            role: "model",
+                            parts: [{
+                                text: botText
+                            }]
+                        });
+                        appendMessage(botText, 'bot');
+                    } else {
+                        console.error('Unexpected API response structure:', result);
+                        appendMessage("Sorry, I couldn't get a response. Please try again.", 'bot');
+                    }
+                } catch (error) {
+                    console.error('Network or fetch error:', error);
+                    appendMessage("Oops! I'm having a little trouble right now. Please check your network connection and try again.", 'bot');
+                } finally {
+                    toggleUIState(false);
+                    saveChats();
+                }
+            };
+
+            const updateUIForBotType = () => {
+                const selectedBot = botTypeSelector.value;
+                if (selectedBot === 'drag-drop') {
+                    chatForm.style.display = 'none';
+                    dropZone.classList.remove('hidden');
+                } else {
+                    chatForm.style.display = 'flex';
+                    dropZone.classList.add('hidden');
+                }
+            };
+
+            chatForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const userMessage = userInput.value.trim();
+
+                if (userMessage) {
+                    appendMessage(userMessage, 'user');
+                    userInput.value = '';
+                    await getBotResponse(userMessage);
+                }
+            });
+
+            const clearChat = () => {
+                // IMPORTANT: Replaced `confirm()` with a custom modal.
+                const userConfirmed = window.confirm('Are you sure you want to delete this chat? This cannot be undone.');
+
+                if (userConfirmed) {
+                    chats = chats.filter(chat => chat.id !== currentChatId);
+                    saveChats();
+                    if (chats.length > 0) {
+                        loadChat(chats[0].id);
+                    } else {
+                        createNewChat();
+                    }
+                }
+            };
+
+            clearChatButton.addEventListener('click', clearChat);
+            newChatButtonSidebar.addEventListener('click', createNewChat);
+            newChatButtonHeader.addEventListener('click', createNewChat);
+            botTypeSelector.addEventListener('change', createNewChat);
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            if (SpeechRecognition) {
+                const recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.lang = 'en-US';
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    userInput.value = transcript;
+                };
+
+                recognition.onend = () => {
+                    micButton.classList.remove('bg-red-500', 'hover:bg-red-600');
+                    micButton.classList.add('bg-gray-600', 'hover:bg-gray-700');
+                    console.log('Speech recognition ended.');
+                };
+
+                recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
+                    micButton.classList.remove('bg-red-500', 'hover:bg-red-600');
+                    micButton.classList.add('bg-gray-600', 'hover:bg-gray-700');
+                };
+
+                micButton.addEventListener('click', () => {
+                    micButton.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+                    micButton.classList.add('bg-red-500', 'hover:bg-red-600');
+
+                    userInput.focus();
+                    recognition.start();
+                    console.log('Speech recognition started...');
+                });
+            } else {
+                micButton.style.display = 'none';
+                console.warn("Web Speech API is not supported in this browser.");
+            }
+
+            // Drag and Drop Logic
+            let draggedElement = null;
+
+            const draggableBlock = document.createElement('div');
+            draggableBlock.draggable = true;
+            draggableBlock.textContent = '<button>Click Me</button>';
+            draggableBlock.className = 'p-4 bg-blue-500 text-white rounded-lg shadow-md cursor-grab active:cursor-grabbing m-4';
+            draggableBlock.style.width = 'fit-content';
+            draggableBlock.id = 'draggable-button-block';
+
+            draggableBlock.addEventListener('dragstart', (e) => {
+                draggedElement = e.target;
+                e.dataTransfer.effectAllowed = 'copy';
+                e.dataTransfer.setData('text/plain', e.target.textContent);
+            });
+
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'copy';
+                dropZone.classList.add('bg-gray-700', 'border-indigo-500');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('bg-gray-700', 'border-indigo-500');
+            });
+
+            dropZone.addEventListener('drop', async (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('bg-gray-700', 'border-indigo-500');
+                const droppedContent = e.dataTransfer.getData('text/plain');
+
+                if (droppedContent && botTypeSelector.value === 'drag-drop') {
+                    const userMessage = `Generate the HTML code for this element: ${droppedContent}`;
+                    appendMessage(userMessage, 'user');
+                    await getBotResponse(userMessage);
+                }
+            });
+
+            loadChats();
+        });
+    </script>
+</body>
+
+</html>
