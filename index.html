@@ -63,8 +63,9 @@
     <script>
         const apiKey = "AIzaSyAtwhWB31MwxaDPmfY9kJNGGn54fv6U7mc";
         
-        // --- GEMINI 3 FLASH API URL (LATEST) ---
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent?key=${apiKey}`;
+        // --- GEMINI 3 FLASH MINI URL ---
+        // Using the 'gemini-3-flash-preview' alias which works best in PK
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
 
         let chats = JSON.parse(localStorage.getItem('echap_chats')) || [];
         let currentChatId = null;
@@ -101,13 +102,13 @@
             if (chat.messages.length === 0) chat.title = text.substring(0, 15) + "...";
             chat.messages.push({ text, type: 'user' });
 
-            const thinking = appendUI("Thinking...", 'bot');
+            const thinking = appendUI("Echap is analyzing...", 'bot');
 
-            // System Prompts for Different Personas
-            let sys = "You are Echap AI 3.1 Ultra powered by Gemini 3 Flash. ";
+            // --- SYSTEM PROMPTS ---
+            let sys = "You are Echap AI 3.1 Ultra. ";
             if(mode === "Coder") sys = "You are a Senior D11 Studios Developer. Provide high-quality C#, HTML, and Unity 6.4 code. ";
             if(mode === "Homework") sys = "You are an expert Tutor. Help the student finish 4 hours of work in 40 minutes with clear explanations. ";
-            if(mode === "Recipe") sys = "You are Chef Echap. Provide delicious, easy, and affordable recipes using ingredients found in Karachi, Pakistan. ";
+            if(mode === "Recipe") sys = "You are Chef Echap. Provide tasty, easy recipes using ingredients available in Karachi, Pakistan. ";
 
             try {
                 const response = await fetch(apiUrl, {
@@ -128,7 +129,7 @@
                 chat.messages.push({ text: aiMsg, type: 'bot' });
                 save();
             } catch (e) {
-                thinking.innerText = "Connection Failed. Check your internet connection.";
+                thinking.innerText = "Connection Failed. Please check your L480 internet.";
             }
         }
 
