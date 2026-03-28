@@ -9,41 +9,50 @@
             --bg: #0d1117;
             --sidebar: #161b22;
             --chat-bubble: #21262d;
-            --accent: #238636; /* Professional Green like DeepSeek */
+            --accent: #238636; 
             --premium: #d29922;
             --text: #c9d1d9;
+            --user-bubble: #057642;
         }
 
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); display: flex; height: 100vh; }
+        body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
 
         /* Sidebar - The Control Center */
-        .sidebar { width: 280px; background: var(--sidebar); border-right: 1px solid #30363d; display: flex; flex-direction: column; padding: 15px; }
-        .new-chat { background: var(--accent); color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 20px; }
+        .sidebar { width: 280px; background: var(--sidebar); border-right: 1px solid #30363d; display: flex; flex-direction: column; padding: 15px; transition: 0.3s; }
+        .new-chat { background: var(--accent); color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 20px; transition: 0.2s; }
+        .new-chat:hover { background: #2ea043; }
+        
         .history { flex: 1; overflow-y: auto; font-size: 13px; opacity: 0.8; }
-        .history-item { padding: 8px; border-radius: 4px; cursor: pointer; margin-bottom: 5px; border: 1px solid transparent; }
-        .history-item:hover { border: 1px solid #30363d; background: #0d1117; }
+        .history-item { padding: 10px; border-radius: 6px; cursor: pointer; margin-bottom: 5px; border: 1px solid transparent; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .history-item:hover { background: #21262d; border-color: #30363d; }
 
         /* Premium Tier Sidebar UI */
-        .premium-box { background: #1c2128; border: 1px solid var(--premium); padding: 12px; border-radius: 8px; margin-top: auto; }
-        .premium-box h3 { color: var(--premium); margin: 0 0 10px 0; font-size: 14px; }
-        .premium-input { width: 100%; background: #0d1117; border: 1px solid #30363d; color: #58a6ff; font-size: 10px; padding: 5px; margin-bottom: 5px; box-sizing: border-box; }
+        .premium-box { background: #1c2128; border: 1px solid var(--premium); padding: 15px; border-radius: 8px; margin-top: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .premium-box h3 { color: var(--premium); margin: 0 0 10px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .premium-input { width: 100%; background: #0d1117; border: 1px solid #30363d; color: #58a6ff; font-family: monospace; font-size: 11px; padding: 8px; margin-bottom: 8px; border-radius: 4px; box-sizing: border-box; }
 
         /* Main Chat Area */
-        .main { flex: 1; display: flex; flex-direction: column; }
-        header { padding: 15px 40px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; background: var(--sidebar); }
+        .main { flex: 1; display: flex; flex-direction: column; position: relative; }
+        header { padding: 15px 40px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; background: var(--sidebar); z-index: 10; }
         
-        #modeSelect { background: #0d1117; color: white; border: 1px solid #30363d; padding: 5px 15px; border-radius: 20px; outline: none; }
+        #modeSelect { background: #0d1117; color: white; border: 1px solid #30363d; padding: 8px 15px; border-radius: 20px; outline: none; cursor: pointer; font-weight: 500; }
 
-        .chat-container { flex: 1; overflow-y: auto; padding: 30px 15%; display: flex; flex-direction: column; gap: 20px; }
-        .msg { max-width: 80%; padding: 12px 18px; border-radius: 15px; line-height: 1.5; font-size: 15px; }
-        .user { align-self: flex-end; background: #238636; color: white; }
-        .bot { align-self: flex-start; background: var(--chat-bubble); border: 1px solid #30363d; }
+        .chat-container { flex: 1; overflow-y: auto; padding: 40px 15%; display: flex; flex-direction: column; gap: 25px; scroll-behavior: smooth; }
+        .msg { max-width: 85%; padding: 15px 20px; border-radius: 12px; line-height: 1.6; font-size: 15.5px; position: relative; }
+        .user { align-self: flex-end; background: var(--user-bubble); color: white; border-bottom-right-radius: 2px; }
+        .bot { align-self: flex-start; background: var(--chat-bubble); border: 1px solid #30363d; border-bottom-left-radius: 2px; }
 
         /* Input Bar */
-        .input-area { padding: 25px 15%; background: var(--bg); }
-        .input-wrap { background: var(--sidebar); border: 1px solid #30363d; border-radius: 10px; display: flex; padding: 10px; align-items: center; }
-        input { flex: 1; background: transparent; border: none; color: white; outline: none; font-size: 16px; padding-left: 10px; }
-        .send-btn { background: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .input-area { padding: 25px 15%; background: var(--bg); border-top: 1px solid #30363d; }
+        .input-wrap { background: var(--sidebar); border: 1px solid #30363d; border-radius: 12px; display: flex; padding: 12px; align-items: center; box-shadow: 0 -5px 20px rgba(0,0,0,0.2); }
+        input { flex: 1; background: transparent; border: none; color: white; outline: none; font-size: 16px; padding: 0 10px; }
+        .send-btn { background: var(--accent); color: white; border: none; padding: 10px 22px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .send-btn:hover { transform: scale(1.05); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -51,90 +60,106 @@
     <aside class="sidebar">
         <button class="new-chat" onclick="location.reload()">+ New Session</button>
         <div class="history" id="history">
-            <div class="history-item">Physics Engine Logic</div>
-            <div class="history-item">Biryani Recipe V1</div>
-            <div class="history-item">Class 5 Math Summary</div>
+            <div class="history-item">D11 Custom Physics Script</div>
+            <div class="history-item">HDRP Lighting Config</div>
+            <div class="history-item">Class 5 Homework Summary</div>
         </div>
 
         <div class="premium-box">
             <h3>Premium Tier ($5)</h3>
             <input type="password" id="customKey" class="premium-input" placeholder="User API Key">
-            <input type="text" id="customURL" class="premium-input" placeholder="Custom API URL">
-            <p style="font-size: 10px; color: var(--premium); margin: 5px 0;">Video & Image Generation Enabled</p>
+            <input type="text" id="customURL" class="premium-input" placeholder="Custom API Endpoint">
+            <p style="font-size: 11px; color: var(--premium); margin: 5px 0; font-weight: 600;">✨ Video & Image Gen Unlocked</p>
         </div>
     </aside>
 
     <main class="main">
         <header>
-            <div style="font-size: 20px; font-weight: bold;">Echap <span style="color:var(--accent)">AI</span></div>
+            <div style="font-size: 22px; font-weight: bold; letter-spacing: -0.5px;">Echap <span style="color:var(--accent)">AI</span> <span style="font-size: 12px; vertical-align: middle; color: #58a6ff; margin-left: 5px;">3.1 ULTRA PRO</span></div>
             <select id="modeSelect">
-                <option value="normal">Normal Mode (Gemini 3.1 Ultra)</option>
-                <option value="recipe">Recipe Mode (Low Cost / Max Taste)</option>
-                <option value="coder">Coder Mode (C#, Python, Web)</option>
-                <option value="homework">Homework Mode (4h to 40m)</option>
+                <option value="normal">Normal Mode (3.1 Ultra Reasoning)</option>
+                <option value="recipe">Recipe Mode (Cheap/Tasty/Simple)</option>
+                <option value="coder">Coder Mode (Advanced C#, Python, Web)</option>
+                <option value="homework">Homework Mode (4h Productivity in 40m)</option>
             </select>
         </header>
 
         <div class="chat-container" id="chat">
-            <div class="msg bot">Welcome Ashar. D11 Studios API is online. How can I assist you tonight?</div>
+            <div class="msg bot">System Initialized. Echap 3.1 Ultra is utilizing the Pro engine for maximum intelligence. How can I assist D11 Studios tonight, Ashar?</div>
         </div>
 
         <div class="input-area">
             <div class="input-wrap">
-                <input type="text" id="userInput" placeholder="Ask anything..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <input type="text" id="userInput" placeholder="Ask Echap Ultra anything..." onkeypress="if(event.key==='Enter') sendMessage()">
                 <button class="send-btn" onclick="sendMessage()">Send</button>
             </div>
         </div>
     </main>
 
     <script>
-        // --- SECURE CONFIGURATION ---
-        // GitHub/Netlify will inject the key into the environment variable.
-        // For local testing on your L480, paste it in LOCAL_KEY.
-        const LOCAL_KEY = ""; // PASTE KEY HERE FOR LOCAL TESTING ONLY
-        const GITHUB_KEY = "REPLACE_WITH_GEMINI_KEY"; 
+        // --- D11 STUDIOS SECURE CONFIGURATION ---
+        // Using Gemini 1.5 Pro for "Ultra" reasoning levels.
+        const API_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent";
         
-        const FINAL_KEY = (LOCAL_KEY !== "") ? LOCAL_KEY : GITHUB_KEY;
-        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent";
+        // This Placeholder is replaced by GitHub Actions/Netlify secrets during build.
+        const GITHUB_ENV_KEY = "REPLACE_WITH_GEMINI_KEY"; 
+        
+        // Local Testing: Paste your key here while on your L480. CLEAR THIS BEFORE UPLOADING!
+        const LOCAL_DEV_KEY = ""; 
+
+        const ACTIVE_KEY = (LOCAL_DEV_KEY !== "") ? LOCAL_DEV_KEY : GITHUB_ENV_KEY;
 
         async function sendMessage() {
             const input = document.getElementById('userInput');
-            const chat = document.getElementById('chat');
+            const chatBox = document.getElementById('chat');
             const mode = document.getElementById('modeSelect').value;
-            const text = input.value;
+            const query = input.value;
 
-            if (!text.trim()) return;
+            if (!query.trim()) return;
 
-            // Add User Msg
-            appendMessage(text, 'user');
+            // 1. Add User Message
+            appendMessage(query, 'user');
             input.value = "";
 
-            // Thinking State
-            const thinkingDiv = appendMessage("Echap AI is thinking...", 'bot');
+            // 2. Add Thinking Bubble
+            const thinkingDiv = appendMessage("Echap Ultra is analyzing...", 'bot');
 
-            // Setup System Prompts per Mode
-            let systemPrompt = "";
-            if(mode === "recipe") systemPrompt = "Mode: Recipe Expert. Give short, cheap, tasty recipes. ";
-            else if(mode === "coder") systemPrompt = "Mode: Senior Developer. Give optimized C#, HTML, and Python code. ";
-            else if(mode === "homework") systemPrompt = "Mode: Tutor. Summarize and solve homework tasks clearly and fast. ";
-            else systemPrompt = "Mode: Gemini 3.1 Ultra. ";
+            // 3. Mode Contexts (System Instruction)
+            let systemContext = "";
+            if(mode === "recipe") systemContext = "You are Echap Recipe Expert. Provide the most delicious recipes using the lowest cost and simplest resources. Be simple. ";
+            else if(mode === "coder") systemContext = "You are Echap Senior Coder. Solve complex logic in C#, HTML, JS, and Python. Optimize for performance. ";
+            else if(mode === "homework") systemContext = "You are Echap Tutor. Help solve homework tasks that usually take 4 hours in just 40 minutes. Be very clear and efficient. ";
+            else systemContext = "You are Echap AI 3.1 Ultra, the most intelligent version of Echap. ";
+
+            // 4. Check for Premium Override
+            const premKey = document.getElementById('customKey').value;
+            const premURL = document.getElementById('customURL').value;
+            
+            const finalURL = (premURL !== "") ? premURL : API_ENDPOINT;
+            const finalKey = (premKey !== "") ? premKey : ACTIVE_KEY;
 
             try {
-                const response = await fetch(`${API_URL}?key=${FINAL_KEY}`, {
+                const response = await fetch(`${finalURL}?key=${finalKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: systemPrompt + text }] }]
+                        contents: [{ parts: [{ text: systemContext + "User Prompt: " + query }] }]
                     })
                 });
 
                 const data = await response.json();
-                const aiText = data.candidates[0].content.parts[0].text;
-                thinkingDiv.innerText = aiText;
+                
+                if(data.error) {
+                    thinkingDiv.innerText = "Security Error: " + data.error.message;
+                    return;
+                }
 
-            } catch (e) {
-                thinkingDiv.innerText = "Error: Key not found or Network issue. Check GitHub Secrets.";
-                console.error(e);
+                const aiResult = data.candidates[0].content.parts[0].text;
+                thinkingDiv.innerText = aiResult;
+
+            } catch (err) {
+                thinkingDiv.innerText = "Connection Failed. Ensure your GitHub Secret or Local Key is active.";
+                console.error(err);
             }
         }
 
@@ -142,8 +167,9 @@
             const div = document.createElement('div');
             div.className = `msg ${type}`;
             div.innerText = text;
-            document.getElementById('chat').appendChild(div);
-            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+            const chat = document.getElementById('chat');
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
             return div;
         }
     </script>
