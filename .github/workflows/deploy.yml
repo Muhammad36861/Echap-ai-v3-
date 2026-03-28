@@ -1,0 +1,23 @@
+name: Secure Key Injector
+
+on:
+  push:
+    branches: [ main ] # Runs every time you push to 'main'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Inject Secret Key
+        run: |
+          # This command finds our placeholder and swaps it for the real secret
+          sed -i 's/D11_SECRET_PLACEHOLDER/${{ secrets.GEMINI_KEY }}/g' index.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./ # Tells GitHub to host your current folder
