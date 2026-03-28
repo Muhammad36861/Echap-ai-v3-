@@ -2,157 +2,93 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Echap AI | 3.1 Ultra Pro (Direct)</title>
+    <title>Echap AI | 3.1 Ultra Pro</title>
     <style>
-        :root {
-            --bg: #0d1117; --sidebar: #161b22; --chat-bubble: #21262d;
-            --accent: #238636; --premium: #d29922; --text: #c9d1d9; --user-bubble: #057642;
-        }
+        :root { --bg: #0d1117; --sidebar: #161b22; --accent: #238636; --text: #c9d1d9; }
         body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
-        .sidebar { width: 280px; background: var(--sidebar); border-right: 1px solid #30363d; display: flex; flex-direction: column; padding: 15px; }
-        .new-chat { background: var(--accent); color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 20px; }
-        .history { flex: 1; overflow-y: auto; font-size: 13px; }
-        .history-item { padding: 10px; border-radius: 6px; cursor: pointer; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent; }
-        .history-item:hover { background: #21262d; border-color: #30363d; }
-        .history-item.active { background: #21262d; border-color: var(--accent); }
-        .del-btn { color: #f85149; font-weight: bold; cursor: pointer; padding: 0 5px; }
+        .sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid #333; padding: 20px; }
         .main { flex: 1; display: flex; flex-direction: column; }
-        header { padding: 15px 40px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; background: var(--sidebar); }
-        #modeSelect { background: #0d1117; color: white; border: 1px solid #30363d; padding: 8px 15px; border-radius: 20px; outline: none; cursor: pointer; }
-        .chat-container { flex: 1; overflow-y: auto; padding: 40px 15%; display: flex; flex-direction: column; gap: 20px; }
-        .msg { max-width: 85%; padding: 15px 20px; border-radius: 12px; line-height: 1.6; font-size: 15.5px; word-wrap: break-word; }
-        .user { align-self: flex-end; background: var(--user-bubble); color: white; }
-        .bot { align-self: flex-start; background: var(--chat-bubble); border: 1px solid #30363d; }
-        .input-area { padding: 25px 15%; background: var(--bg); border-top: 1px solid #30363d; }
-        .input-wrap { background: var(--sidebar); border: 1px solid #30363d; border-radius: 12px; display: flex; padding: 12px; align-items: center; }
-        input { flex: 1; background: transparent; border: none; color: white; outline: none; font-size: 16px; padding: 0 10px; }
-        .send-btn { background: var(--accent); color: white; border: none; padding: 10px 22px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .chat-box { flex: 1; overflow-y: auto; padding: 30px; display: flex; flex-direction: column; gap: 20px; }
+        .msg { padding: 15px; border-radius: 10px; max-width: 80%; line-height: 1.5; }
+        .user { align-self: flex-end; background: #057642; color: white; }
+        .bot { align-self: flex-start; background: #21262d; border: 1px solid #333; }
+        .input-area { padding: 25px; background: var(--sidebar); display: flex; gap: 10px; border-top: 1px solid #333; }
+        input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #0d1117; color: white; outline: none; }
+        button { background: var(--accent); color: white; border: none; padding: 0 25px; border-radius: 8px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
+
     <aside class="sidebar">
-        <button class="new-chat" onclick="createNewChat()">+ New Chat</button>
-        <div class="history" id="chatHistoryList"></div>
-        <div style="font-size: 10px; color: var(--premium); text-align: center; padding-top: 10px;">D11 Studios Enterprise v2.6</div>
+        <h2 style="color: var(--accent);">Echap AI</h2>
+        <p style="font-size: 12px; opacity: 0.7;">Status: 3.1 Ultra Online</p>
+        <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
+        <div style="font-size: 11px;">D11 Studios Enterprise</div>
     </aside>
+
     <main class="main">
-        <header>
-            <div style="font-weight: bold;">Echap <span style="color:var(--accent)">AI</span> 3.1 ULTRA</div>
-            <select id="modeSelect">
-                <option value="normal">Normal Mode</option>
-                <option value="coder">Coder Mode</option>
-                <option value="homework">Homework Mode</option>
-            </select>
-        </header>
-        <div class="chat-container" id="chatBox"></div>
+        <div class="chat-box" id="chatDisplay">
+            <div class="msg bot">System Initialized. Echap AI is ready for your prompt, Ashar.</div>
+        </div>
+
         <div class="input-area">
-            <div class="input-wrap">
-                <input type="text" id="userInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendMessage()">
-                <button class="send-btn" onclick="sendMessage()">Send</button>
-            </div>
+            <input type="text" id="userInput" placeholder="Ask 3.1 Ultra something..." onkeypress="if(event.key==='Enter') sendMessage()">
+            <button onclick="sendMessage()">Send</button>
         </div>
     </main>
 
     <script>
-        // --- PUT YOUR KEY HERE ---
-        const API_KEY = "AIzaSyBQSuzGR9JqlGnvU9PEhyjas_W_wZCzsJ4"; 
-        const API_URL = "`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${API_KEY}`";
-
-        let chats = JSON.parse(localStorage.getItem('echap_chats')) || [];
-        let currentChatId = null;
-
-        function init() {
-            renderHistory();
-            if (chats.length > 0) loadChat(chats[0].id);
-            else createNewChat();
-        }
-
-        function createNewChat() {
-            const newChat = { id: Date.now(), title: "New Chat", messages: [] };
-            chats.unshift(newChat);
-            save(); renderHistory(); loadChat(newChat.id);
-        }
-
-        function loadChat(id) {
-            currentChatId = id;
-            const chatBox = document.getElementById('chatBox');
-            const chat = chats.find(c => c.id === id);
-            chatBox.innerHTML = "";
-            chat.messages.forEach(m => appendMessage(m.text, m.type, false));
-            renderHistory();
-        }
-
-        function deleteChat(id, event) {
-            event.stopPropagation();
-            chats = chats.filter(c => c.id !== id);
-            save();
-            if (currentChatId === id) {
-                if (chats.length > 0) loadChat(chats[0].id);
-                else createNewChat();
-            } else { renderHistory(); }
-        }
+        // --- THE CONST VARIABLE YOU WANTED ---
+        const apiKey = "AIzaSyAtwhWB31MwxaDPmfY9kJNGGn54fv6U7mc"; 
 
         async function sendMessage() {
             const input = document.getElementById('userInput');
-            const mode = document.getElementById('modeSelect').value;
-            const text = input.value.trim();
-            if (!text) return;
+            const chat = document.getElementById('chatDisplay');
+            const userText = input.value.trim();
 
-            appendMessage(text, 'user');
+            if (!userText) return;
+
+            // 1. Show User Message
+            appendMessage(userText, 'user');
             input.value = "";
 
-            const chat = chats.find(c => c.id === currentChatId);
-            if (chat.messages.length === 0) chat.title = text.substring(0, 20);
-            chat.messages.push({ text, type: 'user' });
+            // 2. Show Thinking State
+            const thinkingDiv = appendMessage("Echap is analyzing...", 'bot');
 
-            const thinking = appendMessage("Thinking...", 'bot');
-            
-            let systemPrompt = "You are Echap AI 3.1 Ultra Pro. ";
-            if(mode === "coder") systemContext = "You are an expert C# and Unity coder. ";
-            if(mode === "homework") systemContext = "You are a tutor. Help solve school work quickly and clearly. ";
+            // 3. THE FETCH URL USING YOUR VARIABLE
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
 
             try {
-                const response = await fetch(`${API_URL}?key=${API_KEY}`, {
+                const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: systemPrompt + text }] }] })
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: userText }] }]
+                    })
                 });
+
                 const data = await response.json();
-                const aiMsg = data.candidates[0].content.parts[0].text;
-                thinking.innerText = aiMsg;
-                chat.messages.push({ text: aiMsg, type: 'bot' });
-                save();
-            } catch (e) {
-                thinking.innerText = "Error: Check your API Key or connection.";
-                console.error(e);
+
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    thinkingDiv.innerText = data.candidates[0].content.parts[0].text;
+                } else {
+                    thinkingDiv.innerText = "Error: Model refused or Key is invalid.";
+                    console.log(data);
+                }
+            } catch (error) {
+                thinkingDiv.innerText = "Connection Error. Check your internet or API Key.";
+                console.error(error);
             }
         }
 
-        function appendMessage(text, type, shouldScroll = true) {
+        function appendMessage(text, className) {
             const div = document.createElement('div');
-            div.className = `msg ${type}`;
+            div.className = `msg ${className}`;
             div.innerText = text;
-            const cb = document.getElementById('chatBox');
-            cb.appendChild(div);
-            if (shouldScroll) cb.scrollTop = cb.scrollHeight;
+            chatDisplay.appendChild(div);
+            chatDisplay.scrollTop = chatDisplay.scrollHeight;
             return div;
         }
-
-        function renderHistory() {
-            const list = document.getElementById('chatHistoryList');
-            list.innerHTML = "";
-            chats.forEach(c => {
-                const item = document.createElement('div');
-                item.className = `history-item ${c.id === currentChatId ? 'active' : ''}`;
-                item.onclick = () => loadChat(c.id);
-                item.innerHTML = `<span>${c.title}</span><span class="del-btn" onclick="deleteChat(${c.id}, event)">×</span>`;
-                list.appendChild(item);
-            });
-        }
-
-        function save() { localStorage.setItem('echap_chats', JSON.stringify(chats)); }
-        init();
     </script>
 </body>
 </html>
