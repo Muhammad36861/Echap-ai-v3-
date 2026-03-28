@@ -1,1 +1,152 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echap AI | 3.1 Ultra Suite</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --sidebar: #161b22;
+            --chat-bubble: #21262d;
+            --accent: #238636; /* Professional Green like DeepSeek */
+            --premium: #d29922;
+            --text: #c9d1d9;
+        }
+
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); display: flex; height: 100vh; }
+
+        /* Sidebar - The Control Center */
+        .sidebar { width: 280px; background: var(--sidebar); border-right: 1px solid #30363d; display: flex; flex-direction: column; padding: 15px; }
+        .new-chat { background: var(--accent); color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 20px; }
+        .history { flex: 1; overflow-y: auto; font-size: 13px; opacity: 0.8; }
+        .history-item { padding: 8px; border-radius: 4px; cursor: pointer; margin-bottom: 5px; border: 1px solid transparent; }
+        .history-item:hover { border: 1px solid #30363d; background: #0d1117; }
+
+        /* Premium Tier Sidebar UI */
+        .premium-box { background: #1c2128; border: 1px solid var(--premium); padding: 12px; border-radius: 8px; margin-top: auto; }
+        .premium-box h3 { color: var(--premium); margin: 0 0 10px 0; font-size: 14px; }
+        .premium-input { width: 100%; background: #0d1117; border: 1px solid #30363d; color: #58a6ff; font-size: 10px; padding: 5px; margin-bottom: 5px; box-sizing: border-box; }
+
+        /* Main Chat Area */
+        .main { flex: 1; display: flex; flex-direction: column; }
+        header { padding: 15px 40px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; background: var(--sidebar); }
+        
+        #modeSelect { background: #0d1117; color: white; border: 1px solid #30363d; padding: 5px 15px; border-radius: 20px; outline: none; }
+
+        .chat-container { flex: 1; overflow-y: auto; padding: 30px 15%; display: flex; flex-direction: column; gap: 20px; }
+        .msg { max-width: 80%; padding: 12px 18px; border-radius: 15px; line-height: 1.5; font-size: 15px; }
+        .user { align-self: flex-end; background: #238636; color: white; }
+        .bot { align-self: flex-start; background: var(--chat-bubble); border: 1px solid #30363d; }
+
+        /* Input Bar */
+        .input-area { padding: 25px 15%; background: var(--bg); }
+        .input-wrap { background: var(--sidebar); border: 1px solid #30363d; border-radius: 10px; display: flex; padding: 10px; align-items: center; }
+        input { flex: 1; background: transparent; border: none; color: white; outline: none; font-size: 16px; padding-left: 10px; }
+        .send-btn { background: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <button class="new-chat" onclick="location.reload()">+ New Session</button>
+        <div class="history" id="history">
+            <div class="history-item">Physics Engine Logic</div>
+            <div class="history-item">Biryani Recipe V1</div>
+            <div class="history-item">Class 5 Math Summary</div>
+        </div>
+
+        <div class="premium-box">
+            <h3>Premium Tier ($5)</h3>
+            <input type="password" id="customKey" class="premium-input" placeholder="User API Key">
+            <input type="text" id="customURL" class="premium-input" placeholder="Custom API URL">
+            <p style="font-size: 10px; color: var(--premium); margin: 5px 0;">Video & Image Generation Enabled</p>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header>
+            <div style="font-size: 20px; font-weight: bold;">Echap <span style="color:var(--accent)">AI</span></div>
+            <select id="modeSelect">
+                <option value="normal">Normal Mode (Gemini 3.1 Ultra)</option>
+                <option value="recipe">Recipe Mode (Low Cost / Max Taste)</option>
+                <option value="coder">Coder Mode (C#, Python, Web)</option>
+                <option value="homework">Homework Mode (4h to 40m)</option>
+            </select>
+        </header>
+
+        <div class="chat-container" id="chat">
+            <div class="msg bot">Welcome Ashar. D11 Studios API is online. How can I assist you tonight?</div>
+        </div>
+
+        <div class="input-area">
+            <div class="input-wrap">
+                <input type="text" id="userInput" placeholder="Ask anything..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <button class="send-btn" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- SECURE CONFIGURATION ---
+        // GitHub/Netlify will inject the key into the environment variable.
+        // For local testing on your L480, paste it in LOCAL_KEY.
+        const LOCAL_KEY = ""; // PASTE KEY HERE FOR LOCAL TESTING ONLY
+        const GITHUB_KEY = "REPLACE_WITH_GEMINI_KEY"; 
+        
+        const FINAL_KEY = (LOCAL_KEY !== "") ? LOCAL_KEY : GITHUB_KEY;
+        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const chat = document.getElementById('chat');
+            const mode = document.getElementById('modeSelect').value;
+            const text = input.value;
+
+            if (!text.trim()) return;
+
+            // Add User Msg
+            appendMessage(text, 'user');
+            input.value = "";
+
+            // Thinking State
+            const thinkingDiv = appendMessage("Echap AI is thinking...", 'bot');
+
+            // Setup System Prompts per Mode
+            let systemPrompt = "";
+            if(mode === "recipe") systemPrompt = "Mode: Recipe Expert. Give short, cheap, tasty recipes. ";
+            else if(mode === "coder") systemPrompt = "Mode: Senior Developer. Give optimized C#, HTML, and Python code. ";
+            else if(mode === "homework") systemPrompt = "Mode: Tutor. Summarize and solve homework tasks clearly and fast. ";
+            else systemPrompt = "Mode: Gemini 3.1 Ultra. ";
+
+            try {
+                const response = await fetch(`${API_URL}?key=${FINAL_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: systemPrompt + text }] }]
+                    })
+                });
+
+                const data = await response.json();
+                const aiText = data.candidates[0].content.parts[0].text;
+                thinkingDiv.innerText = aiText;
+
+            } catch (e) {
+                thinkingDiv.innerText = "Error: Key not found or Network issue. Check GitHub Secrets.";
+                console.error(e);
+            }
+        }
+
+        function appendMessage(text, type) {
+            const div = document.createElement('div');
+            div.className = `msg ${type}`;
+            div.innerText = text;
+            document.getElementById('chat').appendChild(div);
+            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+            return div;
+        }
+    </script>
+</body>
+</html>
