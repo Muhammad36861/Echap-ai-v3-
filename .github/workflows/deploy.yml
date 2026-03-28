@@ -16,8 +16,18 @@ jobs:
 
       - name: Inject Secret Key
         run: |
-          # We use double quotes here to handle special characters in the key
-          sed -i "s|D11_SECRET_PLACEHOLDER|${{ secrets.GEMINI_KEY }}|g" index.html
+          # We use | as a separator in case your Gemini Key has / in it
+          sed -i "s|D11_SUPER_SECRET_KEY_PLACEHOLDER|${{ secrets.GEMINI_KEY }}|g" index.html
+          
+      - name: Verify Injection (Security Check)
+        run: |
+          # This checks if the placeholder is GONE. If it's still there, the build FAILS.
+          if grep -q "D11_SUPER_SECRET_KEY_PLACEHOLDER" index.html; then
+            echo "ERROR: Key was NOT injected!"
+            exit 1
+          else
+            echo "SUCCESS: Key injected successfully."
+          fi
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
