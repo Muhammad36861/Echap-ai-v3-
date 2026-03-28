@@ -2,7 +2,10 @@ name: Secure Key Injector
 
 on:
   push:
-    branches: [ main ] # Runs every time you push to 'main'
+    branches: [ main ]
+
+permissions:
+  contents: write
 
 jobs:
   build-and-deploy:
@@ -13,11 +16,11 @@ jobs:
 
       - name: Inject Secret Key
         run: |
-          # This command finds our placeholder and swaps it for the real secret
-          sed -i 's/D11_SECRET_PLACEHOLDER/${{ secrets.GEMINI_KEY }}/g' index.html
+          # We use double quotes here to handle special characters in the key
+          sed -i "s|D11_SECRET_PLACEHOLDER|${{ secrets.GEMINI_KEY }}|g" index.html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./ # Tells GitHub to host your current folder
+          publish_dir: ./
